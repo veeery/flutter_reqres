@@ -44,13 +44,17 @@ class _UsersScreenState extends State<UsersScreen> {
               hasReachedMax: state.hasReachedMax,
               isLoadingMore: state.isLoadingMore,
               itemCount: state.usersList.length,
-              // itemCount: (state.isLoadingMore || state.hasReachedMax) ? state.usersList.length + 1 : state.usersList.length,
               event: () {
                 context.read<UsersBloc>().add(const OnNextPage());
               },
               itemBuilder: (context, index) {
                 Users user = state.usersList[index];
-                return UserCard(users: user, index: index + 1);
+                return UserCard(
+                  users: user,
+                  onTap: () {
+                    // todo go to detail
+                  },
+                );
               },
             );
           } else if (state is UsersEmpty) {

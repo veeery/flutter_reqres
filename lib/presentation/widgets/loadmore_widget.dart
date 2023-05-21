@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_reqres/common/responsive.dart';
+import 'package:flutter_reqres/presentation/widgets/loading_widget.dart';
 
 class LoadMoreWidget extends StatefulWidget {
   final Function event;
@@ -24,7 +26,6 @@ class LoadMoreWidget extends StatefulWidget {
 
 class _LoadMoreWidgetState extends State<LoadMoreWidget> {
   late ScrollController scrollController = ScrollController();
-  bool isLoading = false;
 
   @override
   void initState() {
@@ -55,14 +56,39 @@ class _LoadMoreWidgetState extends State<LoadMoreWidget> {
     return ListView.builder(
       controller: scrollController,
       shrinkWrap: widget.shrinkWrap,
-      itemCount: (widget.isLoadingMore || widget.hasReachedMax) ? widget.itemCount + 1 : widget.itemCount,
+      itemCount: (widget.isLoadingMore || widget.hasReachedMax) ? widget.itemCount + 1 : widget.itemCount + 1,
       itemBuilder: (context, index) {
         if (index < widget.itemCount) {
           return widget.itemBuilder(context, index);
         } else {
           return widget.isLoadingMore
-              ? const Center(child: Text('Loading'))
-              : const Center(child: Text('No Data to load'));
+              ? Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(5.h),
+                    child: const LoadingWidget(),
+                  ),
+                )
+              : widget.hasReachedMax
+                  ? Padding(
+                      padding: EdgeInsets.all(2.h),
+                      child: const Center(child: Text("There's no data anymore")),
+                    )
+                  : Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(2.h),
+                        child: GestureDetector(
+                          onTap: () => widget.event(),
+                          child: Container(
+                            padding: EdgeInsets.all(1.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.grey,
+                            ),
+                            child: const Text('Load More'),
+                          ),
+                        ),
+                      ),
+                    );
         }
       },
     );
