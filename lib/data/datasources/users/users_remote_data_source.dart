@@ -6,6 +6,8 @@ import 'package:flutter_reqres/data/model/users/users_model.dart';
 
 abstract class UsersRemoteDataSource {
   Future<List<UsersModel>> getUsers({required int page, int perPage = 5});
+
+  Future<UsersModel> getUserDetail({required String id});
 }
 
 class UsersRemoteDataSourceImpl extends UsersRemoteDataSource {
@@ -26,6 +28,17 @@ class UsersRemoteDataSourceImpl extends UsersRemoteDataSource {
       }
 
       return usersModel;
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<UsersModel> getUserDetail({required String id}) async {
+    Response response = await dioClient.get("$baseUrl/api/users/$id");
+
+    if (response.statusCode == 200) {
+      return UsersModel.fromJson(response.data["data"]);
     } else {
       throw ServerException();
     }

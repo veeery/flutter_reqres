@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reqres/common/app_routes.dart';
 import 'package:flutter_reqres/common/responsive.dart';
+import 'package:flutter_reqres/presentation/bloc/user_detail/user_detail_bloc.dart';
 import 'package:flutter_reqres/presentation/bloc/users/users_bloc.dart';
 import 'package:flutter_reqres/presentation/pages/users_screen.dart';
 
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => di.locator<UsersBloc>()),
+        BlocProvider(create: (_) => di.locator<UserDetailBloc>()),
       ],
       child: MaterialApp(
         navigatorObservers: [routeObserver],
@@ -36,6 +39,7 @@ class MyApp extends StatelessWidget {
           );
         },
         home: const UsersScreen(),
+        onGenerateRoute: (settings) => AppRoutes.route(settings: settings),
       ),
     );
   }

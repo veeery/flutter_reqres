@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_reqres/common/app_routes.dart';
 import 'package:flutter_reqres/presentation/bloc/users/users_bloc.dart';
+import 'package:flutter_reqres/presentation/widgets/loading_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/loadmore_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/user_card.dart';
 
 import '../../domain/entities/users/users.dart';
+import '../widgets/empty_widget.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({Key? key}) : super(key: key);
@@ -36,9 +39,7 @@ class _UsersScreenState extends State<UsersScreen> {
       body: BlocBuilder<UsersBloc, UsersState>(
         builder: (context, state) {
           if (state is UsersLoading) {
-            return const Center(
-              child: Text('Loading...'),
-            );
+            return const LoadingWidget();
           } else if (state is UsersLoaded) {
             return LoadMoreWidget(
               hasReachedMax: state.hasReachedMax,
@@ -52,14 +53,14 @@ class _UsersScreenState extends State<UsersScreen> {
                 return UserCard(
                   users: user,
                   onTap: () {
-                    // todo go to detail
+                    Navigator.pushNamed(context, AppPages.userDetail, arguments: user.id.toString());
                   },
                 );
               },
             );
           } else if (state is UsersEmpty) {
             return const Center(
-              child: Text('Empty...'),
+              child: EmptyWidget(),
             );
           } else if (state is UsersError) {
             return Center(

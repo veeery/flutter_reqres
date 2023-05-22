@@ -24,4 +24,16 @@ class UsersRepositoryImpl implements UsersRepository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Users>> getUsersDetail({required String id}) async {
+    try {
+      final result = await remoteDataSource.getUserDetail(id: id);
+      return Right(result.toEntity());
+    } on SocketException {
+      return Left(ConnectionFailure());
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
 }

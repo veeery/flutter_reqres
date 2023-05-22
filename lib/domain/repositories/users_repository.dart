@@ -7,4 +7,5 @@ import '../../common/failure.dart';
 abstract class UsersRepository {
   // Remote
   Future<Either<Failure, List<Users>>> getUsers({required int page, int perPage = 5});
+  Future<Either<Failure, Users>> getUsersDetail({required String id});
 }
