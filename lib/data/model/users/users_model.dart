@@ -25,13 +25,24 @@ class UsersModel {
     );
   }
 
-  Users toEntity() {
-    return Users(
-      id: id,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      avatar: avatar,
-    );
+  // Users toEntity() {
+  //   return Users(
+  //     id: id,
+  //     firstName: firstName,
+  //     lastName: lastName,
+  //     email: email,
+  //     avatar: avatar,
+  //   );
+  // }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName' : firstName,
+      'lastName' : lastName,
+      'email': email,
+      'avatar': avatar,
+    };
   }
+
 }

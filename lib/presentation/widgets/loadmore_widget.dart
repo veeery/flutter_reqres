@@ -9,6 +9,7 @@ class LoadMoreWidget extends StatefulWidget {
   final bool shrinkWrap;
   final bool hasReachedMax;
   final bool isLoadingMore;
+  final bool isLoadMoreFailed;
 
   const LoadMoreWidget({
     super.key,
@@ -18,6 +19,7 @@ class LoadMoreWidget extends StatefulWidget {
     this.shrinkWrap = true,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
+    this.isLoadMoreFailed = false,
   });
 
   @override
@@ -61,34 +63,41 @@ class _LoadMoreWidgetState extends State<LoadMoreWidget> {
         if (index < widget.itemCount) {
           return widget.itemBuilder(context, index);
         } else {
-          return widget.isLoadingMore
+          return widget.isLoadMoreFailed
               ? Center(
                   child: Padding(
-                    padding: EdgeInsets.all(5.h),
-                    child: const LoadingWidget(),
+                    padding: EdgeInsets.all(2.h),
+                    child: const Text('Failed due Connection'),
                   ),
                 )
-              : widget.hasReachedMax
-                  ? Padding(
-                      padding: EdgeInsets.all(2.h),
-                      child: const Center(child: Text("There's no data anymore")),
-                    )
-                  : Center(
+              : widget.isLoadingMore
+                  ? Center(
                       child: Padding(
-                        padding: EdgeInsets.all(2.h),
-                        child: GestureDetector(
-                          onTap: () => widget.event(),
-                          child: Container(
-                            padding: EdgeInsets.all(1.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.grey,
-                            ),
-                            child: const Text('Load More'),
-                          ),
-                        ),
+                        padding: EdgeInsets.all(5.h),
+                        child: const LoadingWidget(),
                       ),
-                    );
+                    )
+                  : widget.hasReachedMax
+                      ? Padding(
+                          padding: EdgeInsets.all(2.h),
+                          child: const Center(child: Text("There's no data anymore")),
+                        )
+                      : Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(2.h),
+                            child: GestureDetector(
+                              onTap: () => widget.event(),
+                              child: Container(
+                                padding: EdgeInsets.all(1.h),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.grey,
+                                ),
+                                child: const Text('Load More'),
+                              ),
+                            ),
+                          ),
+                        );
         }
       },
     );

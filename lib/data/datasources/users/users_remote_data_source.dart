@@ -18,9 +18,8 @@ class UsersRemoteDataSourceImpl extends UsersRemoteDataSource {
   @override
   Future<List<UsersModel>> getUsers({required int page, int perPage = 5}) async {
     List<UsersModel> usersModel = [];
-    Response response = await dioClient.get("$baseUrl/api/users?page=$page&per_page=$perPage");
-
-    if (response.statusCode == 200) {
+    try {
+      Response response = await dioClient.dio.get("$baseUrl/api/users?page=$page&per_page=$perPage");
       List<dynamic> result = response.data["data"];
 
       for (var data in result) {
@@ -28,18 +27,17 @@ class UsersRemoteDataSourceImpl extends UsersRemoteDataSource {
       }
 
       return usersModel;
-    } else {
+    } catch (e) {
       throw ServerException();
     }
   }
 
   @override
   Future<UsersModel> getUserDetail({required String id}) async {
-    Response response = await dioClient.get("$baseUrl/api/users/$id");
-
-    if (response.statusCode == 200) {
+    try {
+      Response response = await dioClient.dio.get("$baseUrl/api/users/$id");
       return UsersModel.fromJson(response.data["data"]);
-    } else {
+    } catch (e) {
       throw ServerException();
     }
   }

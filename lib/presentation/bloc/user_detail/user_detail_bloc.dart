@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_reqres/domain/entities/users/users.dart';
 
+import '../../../data/model/users/users_model.dart';
 import '../../../domain/usecases/users/get_user_detail.dart';
 
 part 'user_detail_event.dart';
@@ -11,15 +11,17 @@ class UserDetailBloc extends Bloc<UserDetailEvent, UserDetailState> {
   final GetUserDetail getUserDetail;
 
   UserDetailBloc({required this.getUserDetail}) : super(UserDetailInitial()) {
-    on<FetchUserDetail>((event, emit) async {
-      emit(UserDetailLoading());
+    on<FetchUserDetail>(onFetchUserDetail);
+  }
 
-      final result = await getUserDetail.execute(id: event.id);
+  Future<void> onFetchUserDetail(event, emit) async {
+    emit(UserDetailLoading());
 
-      result.fold(
-        (failure) => emit(UserDetailError(message: failure.message)),
-        (userDetail) => emit(UserDetailLoaded(users: userDetail)),
-      );
-    });
+    final result = await getUserDetail.execute(id: event.id);
+
+    result.fold(
+      (failure) => emit(UserDetailError(message: failure.message)),
+      (userDetail) => emit(UserDetailLoaded(usersModel: userDetail)),
+    );
   }
 }

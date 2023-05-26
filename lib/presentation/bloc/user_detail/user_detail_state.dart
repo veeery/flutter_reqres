@@ -12,14 +12,14 @@ class UserDetailLoading extends UserDetailState {}
 class UserDetailEmpty extends UserDetailState {}
 
 class UserDetailLoaded extends UserDetailState {
-  final Users users;
+  final UsersModel usersModel;
 
   UserDetailLoaded({
-    required this.users,
+    required this.usersModel,
   });
 
   @override
-  List<Object> get props => [users];
+  List<Object> get props => [usersModel];
 }
 
 class UserDetailError extends UserDetailState {

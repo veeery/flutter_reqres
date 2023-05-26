@@ -28,7 +28,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     AppResponsive.init(context: context);
 
     return Scaffold(
-      body: BlocBuilder<UserDetailBloc, UserDetailState>(
+      body: BlocConsumer<UserDetailBloc, UserDetailState>(
+        listener: (context, state) async {
+
+        },
         builder: (context, state) {
           if (state is UserDetailLoading) {
             return const Center(
@@ -39,8 +42,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                UserCard(users: state.users, onTap: () {}),
-                Text('Add')
+                UserCard(
+                  users: state.usersModel,
+                  isCache: false,
+                  onTap: () {
+
+                  },
+                ),
               ],
             );
           } else if (state is UserDetailError) {

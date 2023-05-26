@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reqres/common/app_routes.dart';
+import 'package:flutter_reqres/data/model/users/users_model.dart';
 import 'package:flutter_reqres/presentation/bloc/users/users_bloc.dart';
 import 'package:flutter_reqres/presentation/widgets/loading_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/loadmore_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/user_card.dart';
 
-import '../../domain/entities/users/users.dart';
 import '../widgets/empty_widget.dart';
 
 class UsersScreen extends StatefulWidget {
@@ -17,6 +17,11 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
+  List<UsersModel> userList = [];
+  bool isFailed = false;
+  bool hasReachedMax = false;
+  bool isLoadingMore = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,8 +36,6 @@ class _UsersScreenState extends State<UsersScreen> {
       floatingActionButton: FloatingActionButton.small(
         backgroundColor: Colors.black,
         onPressed: () async {
-          // await onTheNextPage();
-
           context.read<UsersBloc>().add(const OnNextPage());
         },
       ),
@@ -40,18 +43,31 @@ class _UsersScreenState extends State<UsersScreen> {
         builder: (context, state) {
           if (state is UsersLoading) {
             return const LoadingWidget();
-          } else if (state is UsersLoaded) {
+          } else if (state is UsersLoaded || state is UsersLoadMoreError) {
+
+            if (state is UsersLoadMoreError) {
+              isFailed = true;
+            }
+
+            if (state is UsersLoaded) {
+              userList = state.usersList;
+              hasReachedMax = state.hasReachedMax;
+              isLoadingMore = state.isLoadingMore;
+            }
+
             return LoadMoreWidget(
-              hasReachedMax: state.hasReachedMax,
-              isLoadingMore: state.isLoadingMore,
-              itemCount: state.usersList.length,
+              hasReachedMax: hasReachedMax,
+              isLoadingMore: isLoadingMore,
+              isLoadMoreFailed: isFailed,
+              itemCount: userList.length,
               event: () {
                 context.read<UsersBloc>().add(const OnNextPage());
               },
               itemBuilder: (context, index) {
-                Users user = state.usersList[index];
+                UsersModel user = userList[index];
                 return UserCard(
                   users: user,
+                  isCache: false,
                   onTap: () {
                     Navigator.pushNamed(context, AppPages.userDetail, arguments: user.id.toString());
                   },

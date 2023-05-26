@@ -11,21 +11,25 @@ class UsersEmpty extends UsersState {}
 
 class UsersLoading extends UsersState {}
 
+class UsersLoadMoreError extends UsersState {}
+
 class UsersLoaded extends UsersState {
-  final List<Users> usersList;
+  final List<UsersModel> usersList;
   final int page;
   final bool hasReachedMax;
   final bool isLoadingMore;
+  final bool isFailed;
 
   UsersLoaded({
     required this.usersList,
     required this.page,
     this.isLoadingMore = false,
     this.hasReachedMax = false,
+    this.isFailed = false,
   });
 
   @override
-  List<Object> get props => [usersList, page, hasReachedMax, isLoadingMore];
+  List<Object> get props => [usersList, page, hasReachedMax, isLoadingMore, isFailed];
 }
 
 class UsersError extends UsersState {
@@ -36,3 +40,14 @@ class UsersError extends UsersState {
   @override
   List<Object> get props => [message];
 }
+
+class UsersCache extends UsersState {
+  final bool isCache;
+
+  UsersCache({required this.isCache});
+
+  @override
+  List<Object> get props => [isCache];
+}
+
+

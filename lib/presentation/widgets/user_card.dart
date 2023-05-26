@@ -1,15 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_reqres/data/model/users/users_model.dart';
 import 'package:flutter_reqres/domain/entities/users/users.dart';
 
 import '../../common/responsive.dart';
 
 class UserCard extends StatelessWidget {
   final Function() onTap;
-  final Users users;
+  final UsersModel users;
   final int index;
+  final bool isCache;
 
-  const UserCard({super.key, required this.users, required this.onTap, this.index = 1});
+  const UserCard({super.key, required this.users, required this.onTap, this.index = 1,required this.isCache});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class UserCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(isCache ? 'Remove' : 'Follow', style: TextStyle(color: Colors.amber)),
         Text("${users.firstName} ${users.lastName}"),
         Text(users.email),
       ],
