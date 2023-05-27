@@ -36,7 +36,9 @@ class _UsersScreenState extends State<UsersScreen> {
       floatingActionButton: FloatingActionButton.small(
         backgroundColor: Colors.black,
         onPressed: () async {
-          context.read<UsersBloc>().add(const OnNextPage());
+          // context.read<UsersBloc>().add(const OnNextPage());
+          // context.read<UsersBloc>().add(LoadCacheUsers(userId: 1));
+          // context.read<UsersBloc>().add(LoadCacheAllUser());
         },
       ),
       body: BlocBuilder<UsersBloc, UsersState>(
@@ -69,7 +71,9 @@ class _UsersScreenState extends State<UsersScreen> {
                   users: user,
                   isCache: false,
                   onTap: () {
-                    Navigator.pushNamed(context, AppPages.userDetail, arguments: user.id.toString());
+                    // todo try to save data at here
+                    // context.read<UsersBloc>().add(SaveCacheUsers(users: user));
+                    // Navigator.pushNamed(context, AppPages.userDetail, arguments: user.id.toString());
                   },
                 );
               },
@@ -77,10 +81,6 @@ class _UsersScreenState extends State<UsersScreen> {
           } else if (state is UsersEmpty) {
             return const Center(
               child: EmptyWidget(),
-            );
-          } else if (state is UsersError) {
-            return Center(
-              child: Text(state.message),
             );
           } else {
             return const Center(

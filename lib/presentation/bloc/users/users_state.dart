@@ -41,13 +41,3 @@ class UsersError extends UsersState {
   List<Object> get props => [message];
 }
 
-class UsersCache extends UsersState {
-  final bool isCache;
-
-  UsersCache({required this.isCache});
-
-  @override
-  List<Object> get props => [isCache];
-}
-
-

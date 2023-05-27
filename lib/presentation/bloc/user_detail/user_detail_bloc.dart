@@ -24,4 +24,10 @@ class UserDetailBloc extends Bloc<UserDetailEvent, UserDetailState> {
       (userDetail) => emit(UserDetailLoaded(usersModel: userDetail)),
     );
   }
+
+  // Future<void> onSaveCacheUser(event, emit) async {
+  //   // should have loading when save the data
+  //   final result = await ;
+  // }
+  //
 }
