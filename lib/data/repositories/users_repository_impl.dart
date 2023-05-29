@@ -46,7 +46,13 @@ class UsersRepositoryImpl implements UsersRepository {
   @override
   Future<Either<Failure, List<UsersModel>>> cacheAllUser() async {
     final result = await localDataSource.getCacheAllUsers();
-    return Right(result);
+    return Right(result.map((data) => data).toList());
+  }
+
+  @override
+  Future<bool> isCache({required int id}) async {
+    final result = await localDataSource.getCacheUserById(id: id);
+    return result != null;
   }
 
   @override
@@ -61,9 +67,5 @@ class UsersRepositoryImpl implements UsersRepository {
     }
   }
 
-  @override
-  Future<bool> isCache({required int id}) async {
-    final result = await localDataSource.getCacheUserById(id: id);
-    return result != null;
-  }
+
 }

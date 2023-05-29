@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_reqres/common/responsive.dart';
 import 'package:flutter_reqres/presentation/bloc/user_detail/user_detail_bloc.dart';
+import 'package:flutter_reqres/presentation/bloc/users/users_bloc.dart';
 import 'package:flutter_reqres/presentation/widgets/empty_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/user_card.dart';
 
@@ -20,12 +23,17 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     super.initState();
     Future.microtask(() {
       context.read<UserDetailBloc>().add(FetchUserDetail(id: widget.id));
+      context.read<UsersBloc>().add(LoadUserStatusEvent(userId: int.parse(widget.id)));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     AppResponsive.init(context: context);
+
+    bool isCache = context.select<UsersBloc, bool>(
+          (value) => (value.state is UserStatus) ? (value.state as UserStatus).isCache : false,
+    );
 
     return Scaffold(
       body: BlocConsumer<UserDetailBloc, UserDetailState>(
@@ -44,9 +52,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
               children: [
                 UserCard(
                   users: state.usersModel,
-                  isCache: false,
+                  isCache: isCache,
                   onTap: () {
-
+                    context.read<UsersBloc>().add(SaveUserEvent(usersModel: state.usersModel));
                   },
                 ),
               ],

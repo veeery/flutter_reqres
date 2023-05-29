@@ -9,20 +9,20 @@ abstract class UsersLocalDataSource {
 }
 
 class UsersLocalDataSourceImpl implements UsersLocalDataSource {
-  final DatabaseInstance databaseInstance;
+  final DatabaseHelper databaseHelper;
 
-  UsersLocalDataSourceImpl({required this.databaseInstance});
+  UsersLocalDataSourceImpl({required this.databaseHelper});
 
   @override
   Future<List<UsersModel>> getCacheAllUsers() async {
-    List<UsersModel> result = await databaseInstance.getAllUsers();
-    return result;
+    final result = await databaseHelper.getAllUsers();
+    return result.map((data) => UsersModel.fromDatabase(data)).toList();
   }
 
   @override
   Future<String> insertCacheUser({required UsersModel usersModel}) async {
     try {
-      final data = await databaseInstance.insertUser(usersModel: usersModel);
+      final data = await databaseHelper.insertUser(usersModel: usersModel);
       return "Added";
     } catch (e) {
       throw DatabaseException(e.toString());
@@ -31,7 +31,7 @@ class UsersLocalDataSourceImpl implements UsersLocalDataSource {
 
   @override
   Future<UsersModel?> getCacheUserById({required int id}) async {
-    final result = await databaseInstance.getCacheUserById(id);
+    final result = await databaseHelper.getCacheUserById(id: id);
     if (result != null) {
       return UsersModel.fromJson(result);
     } else {

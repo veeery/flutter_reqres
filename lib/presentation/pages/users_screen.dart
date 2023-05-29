@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_reqres/common/app_routes.dart';
 import 'package:flutter_reqres/data/model/users/users_model.dart';
 import 'package:flutter_reqres/presentation/bloc/users/users_bloc.dart';
 import 'package:flutter_reqres/presentation/widgets/loading_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/loadmore_widget.dart';
 import 'package:flutter_reqres/presentation/widgets/user_card.dart';
 
+import '../../common/app_routes.dart';
 import '../widgets/empty_widget.dart';
 
 class UsersScreen extends StatefulWidget {
@@ -36,7 +36,7 @@ class _UsersScreenState extends State<UsersScreen> {
       floatingActionButton: FloatingActionButton.small(
         backgroundColor: Colors.black,
         onPressed: () async {
-          // context.read<UsersBloc>().add(const OnNextPage());
+          context.read<UsersBloc>().add(const LoadAllUsersEvent());
           // context.read<UsersBloc>().add(LoadCacheUsers(userId: 1));
           // context.read<UsersBloc>().add(LoadCacheAllUser());
         },
@@ -45,8 +45,8 @@ class _UsersScreenState extends State<UsersScreen> {
         builder: (context, state) {
           if (state is UsersLoading) {
             return const LoadingWidget();
-          } else if (state is UsersLoaded || state is UsersLoadMoreError) {
-
+          } else if (state is UsersLoaded || state is UsersLoadMoreError || state is UserStatus || state is UserCacheLoaded) {
+            bool isCache = false;
             if (state is UsersLoadMoreError) {
               isFailed = true;
             }
@@ -55,6 +55,15 @@ class _UsersScreenState extends State<UsersScreen> {
               userList = state.usersList;
               hasReachedMax = state.hasReachedMax;
               isLoadingMore = state.isLoadingMore;
+            }
+
+            if (state is UserStatus) {
+              isCache = state.isCache;
+            }
+
+            if (state is UserCacheLoaded) {
+              userList.clear();
+              userList = state.usersList;
             }
 
             return LoadMoreWidget(
@@ -69,14 +78,18 @@ class _UsersScreenState extends State<UsersScreen> {
                 UsersModel user = userList[index];
                 return UserCard(
                   users: user,
-                  isCache: false,
+                  isCache: isCache,
                   onTap: () {
-                    // todo try to save data at here
+                    context.read<UsersBloc>().add(SaveUserEvent(usersModel: user));
                     // context.read<UsersBloc>().add(SaveCacheUsers(users: user));
                     // Navigator.pushNamed(context, AppPages.userDetail, arguments: user.id.toString());
                   },
                 );
               },
+            );
+          } else if (state is UsersError) {
+            return Center(
+              child: Text(state.message),
             );
           } else if (state is UsersEmpty) {
             return const Center(

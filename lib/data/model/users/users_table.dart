@@ -7,7 +7,7 @@ class UserTable extends Equatable {
   final String email;
   final String firstName;
   final String lastName;
-  final Uri avatar;
+  final String avatar;
 
   const UserTable({
     required this.id,

@@ -17,27 +17,28 @@ class OnNextPage extends UsersEvent {
   @override
   List<Object> get props => [];
 }
-//
-// class SaveCacheUsers extends UsersEvent {
-//   final UsersModel users;
-//
-//   const SaveCacheUsers({required this.users});
-//
-//   @override
-//   List<Object> get props => [users];
-// }
-//
-// class LoadCacheUsers extends UsersEvent {
-//   final int userId;
-//
-//   const LoadCacheUsers({required this.userId});
-//
-//   @override
-//   List<Object> get props => [userId];
-// }
-//
-// class LoadCacheAllUser extends UsersEvent {
-//   @override
-//   List<Object> get props => [];
-//
-// }
+
+class SaveUserEvent extends UsersEvent {
+  final UsersModel usersModel;
+
+  const SaveUserEvent({required this.usersModel});
+
+  @override
+  List<Object> get props => [usersModel];
+}
+
+class LoadUserStatusEvent extends UsersEvent {
+  final int userId;
+
+  const LoadUserStatusEvent({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class LoadAllUsersEvent extends UsersEvent {
+  const LoadAllUsersEvent();
+
+  @override
+  List<Object> get props => [];
+}

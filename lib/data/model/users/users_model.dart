@@ -5,7 +5,7 @@ class UsersModel {
   final String email;
   final String firstName;
   final String lastName;
-  final Uri avatar;
+  final String avatar;
 
   UsersModel({
     required this.id,
@@ -21,7 +21,17 @@ class UsersModel {
       firstName: json['first_name'],
       lastName: json['last_name'],
       email: json['email'],
-      avatar: Uri.parse(json['avatar'].toString()),
+      avatar: json['avatar'],
+    );
+  }
+
+  factory UsersModel.fromDatabase(Map<String, dynamic> json) {
+    return UsersModel(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      email: json['email'],
+      avatar: json['avatar'],
     );
   }
 

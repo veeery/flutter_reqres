@@ -1,68 +1,69 @@
-import 'dart:io';
-
+import 'package:flutter_reqres/data/datasources/db/database_table/user_table.dart';
 import 'package:flutter_reqres/data/model/users/users_model.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../../domain/entities/users/users.dart';
+class DatabaseHelper {
+  static DatabaseHelper? _databaseHelper;
 
-class DatabaseInstance {
-  final String databaseName = 'database.db';
-  final int databaseVersion = 1;
-
-  // User Table
-  final String table = 'user';
-  final String id = 'id';
-  final String firstName = 'firstName';
-  final String lastName = 'lastName';
-  final String avatar = 'avatar';
-
-  Database? database;
-
-  Future<Database> startDatabase() async {
-    if (database != null) return database!;
-    database = await initDatabase();
-    return database!;
+  DatabaseHelper._instance() {
+    _databaseHelper = this;
   }
 
-  Future initDatabase() async {
-    Directory documentDirectory = await getApplicationDocumentsDirectory();
+  factory DatabaseHelper() => _databaseHelper ?? DatabaseHelper._instance();
 
-    String path = join(documentDirectory.path, databaseName);
-    return openDatabase(path);
+  static Database? _database;
+
+  Future<Database?> get database async {
+    _database ??= await _initDb();
+    return _database;
   }
 
-  Future onCreate(Database db, int version) async {
+  Future<Database> _initDb() async {
+    final path = await getDatabasesPath();
+    final databasePath = '$path/database.db';
+
+    var db = await openDatabase(databasePath, version: 1, onCreate: _onCreate);
+    return db;
+  }
+
+  void _onCreate(Database db, int version) async {
     final batch = db.batch();
-    await db
-        .execute('CREATE TABLE $table ($id INTEGER PRIMARY KEY, $firstName TEXT, $lastName TEXT, $avatar TEXT NULL');
+    db.execute('''
+      CREATE TABLE ${UserTable.table} (
+        ${UserTable.id} INTEGER PRIMARY KEY,
+        ${UserTable.email} TEXT,
+        ${UserTable.firstName} TEXT,
+        ${UserTable.lastName} TEXT,
+        ${UserTable.avatar} TEXT
+        );
+      ''');
     await batch.commit();
   }
 
-  // User Function Local Save
-  Future<List<UsersModel>> getAllUsers() async {
-    final data = await database!.query(table);
-    List<UsersModel> result = data.map((e) => UsersModel.fromJson(e)).toList();
-
-    return result;
-  }
-
+  // User
   Future<int> insertUser({required UsersModel usersModel}) async {
-    return await database!.insert(table, usersModel.toJson());
+    final db = await database;
+    return await db!.insert(UserTable.table, usersModel.toJson());
   }
 
-  Future<Map<String, dynamic>?> getCacheUserById(int id) async {
-    final result = await database!.query(
-      table,
+  Future<Map<String, dynamic>?> getCacheUserById({required int id}) async {
+    final db = await database;
+    final results = await db!.query(
+      UserTable.table,
       where: 'id = ?',
       whereArgs: [id],
     );
 
-    if (result.isNotEmpty) {
-      return result.first;
+    if (results.isNotEmpty) {
+      return results.first;
     } else {
       return null;
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllUsers() async {
+    final db = await database;
+    final List<Map<String, dynamic>> results = await db!.query(UserTable.table);
+    return results;
   }
 }
